@@ -1,0 +1,59 @@
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Menu | Notable Light</title>
+  <!-- ПОДКЛЮЧЕНИЕ ВНЕШНЕГО CSS через raw.githack.com -->
+  <!-- Вместо URL подставьте свою ссылку, полученную после загрузки style.css на GitHub -->
+  <link rel="stylesheet" href="https://raw.githack.com/ВАШ_ЛОГИН/ВАШ_РЕПОЗИТОРИЙ/main/style.css">
+</head>
+<body>
+
+<div id="wrapper">
+  <nav>
+    <ul>
+      <li><a href="#">Блок 1</a></li>
+      <li><a href="#">Блок 2</a></li>
+      <li>
+        <a href="#">Блок 3</a>
+        <ul>
+          <li><a href="#">Подменю 1</a></li>
+          <li><a href="#">Подменю 2</a></li>
+          <li><a href="#">Подменю 3</a></li>   <!-- три пункта субменю -->
+        </ul>
+      </li>
+      <li><a href="#">Блок 4</a></li>
+      <li><a href="#">Блок 5</a></li>           <!-- пятая вкладка -->
+    </ul>
+  </nav>
+</div>
+
+<!-- ДВЕ СТРОКИ КОЛОНОК (каждая содержит левую и правую часть) -->
+<div id="frameset">
+  <div class="row">
+    <div class="left">
+      <h3>Строка 1 – левая колонка</h3>
+      <p>Содержимое первой строки. Здесь может быть текст, изображения или любые виджеты.</p>
+    </div>
+    <div class="right">
+      <h3>Строка 1 – правая колонка</h3>
+      <p>Информация для правой части первого ряда.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="left">
+      <h3>Строка 2 – левая колонка</h3>
+      <p>Второй ряд. Контент левой области.</p>
+    </div>
+    <div class="right">
+      <h3>Строка 2 – правая колонка</h3>
+      <p>Правая область второго ряда. Готово для ваших данных.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  © 2025 Notable Light theme. Все права защищены. | Макет с 5 вкладками и 3-пунктным субменю
+</footer>
+
+</body>
+</html>
