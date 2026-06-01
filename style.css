@@ -15,7 +15,7 @@ body {
 nav {
   margin: 0 auto;
   margin-top: 3em;
-  width: 1300px;
+  width: 1083px;
 }
 
 /* 4) Размещение вкладок */
@@ -98,7 +98,7 @@ nav ul li:hover ul {
 /* 11) Общий идентификатор колонок */
 #frameset {
   overflow: hidden;
-  width: 1300px;
+  width: 1083px;
   margin: 2em auto 0 auto;
 }
 
@@ -134,7 +134,7 @@ footer {
   color: #2c3e5c;
   text-align: center;
   padding: 1.5em;
-  width: 1300px;
+  width: 1083px;
   margin: 0 auto;
   font-family: Consolas, monaco, monospace;
 }
