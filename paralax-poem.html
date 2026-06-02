@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>3D Parallax Shader</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: #050510;
+        }
+        canvas {
+            display: block;
+        }
+        .poetry-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 20;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        .poetry-card {
+            max-width: 700px;
+            width: 85%;
+            padding: 2rem;
+            font-family: 'Courier New', monospace;
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 15px rgba(0,0,0,0.9), 0 2px 4px black;
+            font-weight: 500;
+        }
+        .poetry-card p {
+            margin: 0.6rem 0;
+            font-size: 1.2rem;
+            line-height: 1.5;
+        }
+        .poetry-card .stanza { margin-bottom: 1.2rem; }
+        @media (max-width: 650px) {
+            .poetry-card p { font-size: 1rem; }
+            .poetry-card { padding: 1.2rem; }
+        }
+        .instruction {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            background: rgba(0,0,0,0.4);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #ccc;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body>
+    <div class="poetry-overlay">
+        <div class="poetry-card">
+            <div class="stanza"><p>Я потерял табак,</p><p>я развернул карман,</p><p>Что-то со мной не так –</p><p>слышу какой-то ток</p></div>
+            <div class="stanza"><p>В пальцах (какой-то знак</p><p>чувствую) или звук</p><p>Дробный, как будто рак</p><p>пятится, или танк-</p></div>
+            <div class="stanza"><p>Тысячевёрст, и мрак</p><p>чудится, отражен</p><p>В зеркале, но не так</p><p>(вытянут, искажен),</p></div>
+            <div class="stanza"><p>Вот и стою с ножом,</p><p>не узнаю своих</p><p>Черт, как в лице чужом,</p><p>вижу чужое в них –</p></div>
+            <div class="stanza"><p>Не говорит стекло</p><p>правды, и нет стекла,</p><p>Что-то меня влекло,</p><p>может быть, смерть влекла,</p></div>
+            <div class="stanza"><p>То есть какой-то ток,</p><p>странный какой-то знак,</p><p>я потерял платок,</p><p>что-то со мной не так.</p></div>
+        </div>
+    </div>
+    <div class="instruction">🖱️ двигай мышью — 3D-параллакс</div>
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.128.0/build/three.module.js" } }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x050510);
+        const camera = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.1, 1000);
+        camera.position.set(0,0,2.5);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(innerWidth, innerHeight);
+        document.body.appendChild(renderer.domElement);
+        let targetX=0, targetY=0, curX=0, curY=0;
+        const texture = new THREE.TextureLoader().load('https://raw.githubusercontent.com/animocsidol345-eng/dada/main/photo_2026-05-18_01-10-41.jpg');
+        const geometry = new THREE.PlaneGeometry(3.2,1.8);
+        const uniforms = { uTexture: { value: texture }, uTime: { value: 0 }, uMouseDelta: { value: new THREE.Vector2() } };
+        const material = new THREE.ShaderMaterial({
+            uniforms,
+            vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }`,
+            fragmentShader: `
+                uniform sampler2D uTexture;
+                uniform float uTime;
+                uniform vec2 uMouseDelta;
+                varying vec2 vUv;
+                void main() {
+                    vec2 uv = vUv;
+                    uv.x += uMouseDelta.x * 0.09 * (0.5 - uv.y);
+                    uv.y += uMouseDelta.y * 0.09 * (0.5 - uv.x);
+                    uv.x += sin(uv.y*18.0 + uTime*1.8)*0.004;
+                    uv.y += cos(uv.x*16.0 + uTime*1.4)*0.004;
+                    vec4 tex = texture2D(uTexture, uv);
+                    float vig = 1.0 - length(vUv-0.5)*0.35;
+                    gl_FragColor = vec4(tex.rgb * vig, 1.0);
+                }
+            `
+        });
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        window.addEventListener('mousemove', (e) => {
+            const mx = (e.clientX/innerWidth)*2-1;
+            const my = (e.clientY/innerHeight)*2-1;
+            targetY = mx * 0.4; targetX = my * 0.4;
+            uniforms.uMouseDelta.value.set(mx, my);
+        });
+        let clock = new THREE.Clock();
+        function animate() {
+            const t = clock.getElapsedTime();
+            uniforms.uTime.value = t;
+            curX += (targetX - curX) * 0.08;
+            curY += (targetY - curY) * 0.08;
+            camera.position.x = curY * 0.5;
+            camera.position.y = -curX * 0.3;
+            camera.lookAt(0,0,0);
+            mesh.rotation.x = curX * 0.2;
+            mesh.rotation.y = curY * 0.2;
+            renderer.render(scene, camera);
+            requestAnimationFrame(animate);
+        }
+        animate();
+        window.addEventListener('resize', () => {
+            camera.aspect = innerWidth/innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(innerWidth, innerHeight);
+        });
+    </script>
+</body>
+</html>
